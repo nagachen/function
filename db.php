@@ -1,14 +1,18 @@
 <?php
-// echo"<pre>";
+ echo"<pre>";
 // // print_r(all('options'));
-//    print_r(find('options',8));
-// echo "</pre>";
+ print_r(find('options',8));
+ print_r(find('options',['subject_id'=>5,'description'=>'5萬']));
+
+ echo "</pre>";
 
 // update('options',['description'=>'10萬','total'=>200],8);
 
 // insert('options',['description'=>'5萬','subject_id'=>5,'total'=>55]);
 
-del('options',50);
+del('options',8);
+del('options',['subject_id'=>5,'description'=>'5萬']);
+
 
 function all($table){ //顯示指定資料表的資料
     $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
@@ -19,10 +23,23 @@ function all($table){ //顯示指定資料表的資料
 
 }
 
-function find($table,$id){
+function find($table,$arg){
     $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
     $pdo=new PDO($dsn,'root',''); 
-    $sql="select * from `$table` where `id`='$id'";
+    $sql="select * from `$table` where ";
+    if(is_array($arg)){
+        foreach($arg as $key => $value){
+            $tmp[]="`$key`='$value'";
+        }
+
+        // print_r($tmp);
+
+        $sql .= join(" && ",$tmp);
+        // print_r($sql);
+
+    }else{
+        $sql .=" `id` = '$arg' ";
+    }
     $row=$pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
     return $row;
 }
@@ -62,10 +79,24 @@ function insert($table,$cols){
 
 }
 
-function del($table,$id){
+function del($table,$arg){
     $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
     $pdo=new PDO($dsn,'root','');
-    $sql="delete from `$table` where `id`='$id'";
-    $pdo->exec($sql);
+    $sql="delete from `$table` where";
+    if(is_array($arg)){
+        foreach($arg as $key => $value){
+            $tmp[]="`$key`='$value'";
+        }
+
+        // print_r($tmp);
+
+        $sql .= join(" && ",$tmp);
+        // print_r($sql);
+
+    }else{
+        $sql .=" `id` = '$arg' ";
+    }
+    echo $sql;
+    return $pdo->exec($sql);
 }
 ?>
