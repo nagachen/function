@@ -4,8 +4,9 @@ echo"<pre>";
    print_r(find('options',8));
 echo "</pre>";
 
-update('options',['description'=>'10萬','total'=>200],8);
+// update('options',['description'=>'10萬','total'=>200],8);
 
+insert('options',['description'=>'55萬','subject_id'=>5,'total'=>1]);
 function all($table){ //顯示指定資料表的資料
     $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
     $pdo=new PDO($dsn,'root','');
@@ -40,3 +41,16 @@ function update($table,$cols,$id){ //一次更新一筆
     $result=$pdo->exec($sql);
     return $result;
 }
+
+function insert($table,$cols){
+    $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
+    $pdo=new PDO($dsn,'root',''); 
+    $col=array_keys($cols);//取出key 陣列
+    $sql="insert into $table (`".join("`,`",$col)."`) 
+        values('".join("','",$cols)."')";
+        echo $sql;
+        $result=$pdo->exec($sql);
+    return $result;
+
+}
+?>
