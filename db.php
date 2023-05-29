@@ -1,12 +1,15 @@
 <?php
-echo"<pre>";
-// print_r(all('options'));
-   print_r(find('options',8));
-echo "</pre>";
+// echo"<pre>";
+// // print_r(all('options'));
+//    print_r(find('options',8));
+// echo "</pre>";
 
 // update('options',['description'=>'10萬','total'=>200],8);
 
-insert('options',['description'=>'5萬','subject_id'=>5,'total'=>55]);
+// insert('options',['description'=>'5萬','subject_id'=>5,'total'=>55]);
+
+del('options',50);
+
 function all($table){ //顯示指定資料表的資料
     $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
     $pdo=new PDO($dsn,'root','');
@@ -57,5 +60,12 @@ function insert($table,$cols){
         $result=$pdo->exec($sql);
     return $result;
 
+}
+
+function del($table,$id){
+    $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
+    $pdo=new PDO($dsn,'root','');
+    $sql="delete from `$table` where `id`='$id'";
+    $pdo->exec($sql);
 }
 ?>
