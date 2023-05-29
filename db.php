@@ -1,17 +1,20 @@
 <?php
- echo"<pre>";
-// // print_r(all('options'));
- print_r(find('options',8));
- print_r(find('options',['subject_id'=>5,'description'=>'5萬']));
+//  echo"<pre>";
+// // // print_r(all('options'));
+//  print_r(find('options',8));
+//  print_r(find('options',['subject_id'=>5,'description'=>'5萬']));
 
- echo "</pre>";
+//  echo "</pre>";
 
 // update('options',['description'=>'10萬','total'=>200],8);
 
 // insert('options',['description'=>'5萬','subject_id'=>5,'total'=>55]);
 
-del('options',8);
-del('options',['subject_id'=>5,'description'=>'5萬']);
+// del('options',8);
+// del('options',['subject_id'=>5,'description'=>'5萬']);
+update('options',['id'=>48 ,'description'=>'10萬','total'=>200]);
+
+insert('options',['description'=>'51萬','subject_id'=>7,'total'=>45]);
 
 
 function all($table){ //顯示指定資料表的資料
@@ -44,20 +47,22 @@ function find($table,$arg){
     return $row;
 }
 
-function update($table,$cols,$id){ //一次更新一筆
+function update($table,$cols){ //一次更新一筆
     $dsn="mysql:host=localhost;charset=utf8;dbname=vote";
     $pdo=new PDO($dsn,'root',''); 
-    $tmp='';
+    
     //['subject'=>'今天天氣很好吧?',
     // 'open_time'=>'2023-05-29',
     // 'close_time'=>'2023-06-05',
     //]
     foreach($cols as $key => $value){
-        $tmp .= "`$key`='$value',";
+        if($key!='id'){
+            $tmp[] = "`$key`='$value'";
+        }
     }
-    //刪除前後多餘的逗號','
-    $tmp=trim($tmp,',');
-    $sql="update `$table`set $tmp where `id`='$id'";
+
+    $sql="update `$table`set ".join(",",$tmp)."where `id`='{$cols['id']}'";
+    echo $sql;
     $result=$pdo->exec($sql);
     return $result;
 }
@@ -98,5 +103,13 @@ function del($table,$arg){
     }
     echo $sql;
     return $pdo->exec($sql);
+}
+
+function save($table,$cols){
+    if(isset($cols['id'])){
+        update($table,$cols);
+    }else{
+        insert($table,$cols);
+    }
 }
 ?>
