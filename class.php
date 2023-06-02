@@ -13,10 +13,11 @@ class Animal{
     }
 
     public function setName($string){
+        $this->name = $string;
         return $this->name;
     }
     public function age(){   //預設為public 
-        return $this->age;
+        return $this->run();
     }
     private function speed(){
         return "跑速1000";
@@ -31,10 +32,30 @@ echo"<br>";
 echo $animal->getName();
 // echo $animal->age;  //無法存取
 // echo $animal->hair; //無法存取
-$animal->setName("小莉");  
+echo $animal->setName("小莉");  
 
-echo $animal->age()   //讀取private屬性的方式 Get的方式
+echo $animal->age();   //讀取private屬性的方式 Get的方式
 
 // echo $animal->speed();
+
+//繼承使用方式
+class Cat extends Animal {
+
+    function catRun() {
+        return $this->run();
+    }
+
+    //覆寫
+    function run(){
+        return "走走走";
+    }
+}
+
+echo "<br>";
+$cat=new Cat;
+echo $cat->age();
+echo $cat->catrun();
+echo $cat->run();
+
 
 ?>
