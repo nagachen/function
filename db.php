@@ -1,10 +1,10 @@
 <?php
-echo "<pre>";
-print_r(all('options', ["*", 'description' => '30萬']));
-//print_r(find('options',8));
-//  print_r(find('options',['subject_id'=>5,'description'=>'5萬']));
+// echo "<pre>";
+// print_r(all('options', ["*", 'description' => '30萬']));
+// //print_r(find('options',8));
+// //  print_r(find('options',['subject_id'=>5,'description'=>'5萬']));
 
-echo "</pre>";
+// echo "</pre>";
 
 // update('options',['description'=>'10萬','total'=>200],8);
 
@@ -16,8 +16,75 @@ echo "</pre>";
 
 // insert('options',['description'=>'51萬','subject_id'=>7,'total'=>45]);
 
+echo "<br>";
+echo _math('options','max','id');
+echo "<br>";
+echo _math('options','min','id');
+echo "<br>";
+echo _math('options','sum','total',['subject_id'=>7]);
+//計數用函式
+function _math($table,$math,$col,...$arg)
+{
+    
+    $pdo = pdo();
+    $sql = "select $math(`$col`) from $table";
+    if (!empty($arg)) {
+        if (is_array($arg[0])) { //['type'=>1,'login'=>1]
+            foreach ($arg[0] as $key => $value) {
+                $tmp[] = "`$key`='$value'";
+            }
+        }
+        //"select * from $table where 'type'=1 &&'login'= 1"
+        $sql = $sql . " where " . join("&&", $tmp);
+    } else {
+        $sql = $sql ." where " ; //"select * from $table"
+        
+        
+    }
+    if (isset($arg[1])) {                   //$arg[0] 之後可以比照arg[0]辦理 
+        $sql = $sql ." where ". $arg[1];
+    }
+    $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC); //出錯
+       
+    
+    return $rows;
+
+}
+
+
+echo _count('option');
+//計數用函式
+function _count($table, ...$arg)
+{
+    $pdo = pdo();
+    $sql = "select count(*) from $table";
+    if (!empty($arg)) {
+        if (is_array($arg[0])) { //['type'=>1,'login'=>1]
+            foreach ($arg[0] as $key => $value) {
+                $tmp[] = "`$key`='$value'";
+            }
+        }
+        //"select * from $table where 'type'=1 &&'login'= 1"
+        $sql = $sql . " where " . join("&&", $tmp);
+
+    } else {
+        $sql = $sql ." where ". $arg[0]; //"select * from $table"
+    }
+    if (isset($arg[1])) {
+        $sql = $sql ." where ". $arg[1];
+    }
+
+    $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    return $rows;
+
+}
+
+
+
+
 //老師建議的寫法
-function pdo(){
+function pdo()
+{
     $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
     return $pdo = new PDO($dsn, 'root', '');
 }
@@ -36,25 +103,26 @@ function pdo(){
 //例:select * from `topics` where `type`=1 && `login`=1 order by `id` desc
 //例:all(`topic`,['type'=>1,'login'=>1],"order by `id` desc")
 
-function all ($table,...$arg){
-    $pdo=pdo();
-    $sql="select * from $table";
-    if(!empty($arg)){
-        if(is_array($arg[0])){  //['type'=>1,'login'=>1]
-            foreach ($arg as $key => $value) {
+function all($table, ...$arg)
+{
+    $pdo = pdo();
+    $sql = "select * from $table";
+    if (!empty($arg)) {
+        if (is_array($arg[0])) { //['type'=>1,'login'=>1]
+            foreach ($arg[0] as $key => $value) {
                 $tmp[] = "`$key`='$value'";
             }
         }
-        $sql=$sql . join("&&",$tmp);  
-        $sql .= 'where ';                                //"select * from $table  'type'=>1,'login'=>1"
-        dd($sql);
-    }else{
-        $sql=$sql .$arg[0];    //"select * from $table"
+        //"select * from $table where 'type'=1 &&'login'= 1"
+        $sql = $sql . " where " . join("&&", $tmp);
+
+    } else {
+        $sql = $sql ." where ". $arg[0]; //"select * from $table"
     }
-    if(isset($arg[1])){
-        $sql=$sql . $arg[1];
+    if (isset($arg[1])) {
+        $sql = $sql ." where ". $arg[1];
     }
-    
+
     $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     return $rows;
 
@@ -78,7 +146,7 @@ function all ($table,...$arg){
 //         $sql .= join(" && ", $tmp);
 //         echo $sql;
 //         echo "<br>";
-    
+
 //     $row = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
 //     }
 //     return $row;
@@ -87,7 +155,7 @@ function all ($table,...$arg){
 
 function find($table, $arg)
 {
-    $pdo=pdo();
+    $pdo = pdo();
     $sql = "select * from `$table` where ";
     if (is_array($arg)) {
         foreach ($arg as $key => $value) {
@@ -108,7 +176,7 @@ function find($table, $arg)
 
 function update($table, $cols)
 { //一次更新一筆
-    $pdo=pdo();
+    $pdo = pdo();
 
     //['subject'=>'今天天氣很好吧?',
     // 'open_time'=>'2023-05-29',
@@ -128,7 +196,7 @@ function update($table, $cols)
 
 function insert($table, $cols)
 {
-    $pdo=pdo();
+    $pdo = pdo();
     $col = array_keys($cols); //取出key 陣列
     $sql = "insert into $table (`";
     $sql .= join("`,`", $col);
@@ -145,7 +213,7 @@ function insert($table, $cols)
 
 function del($table, $arg)
 {
-    $pdo=pdo();
+    $pdo = pdo();
     $sql = "delete from `$table` where";
     if (is_array($arg)) {
         foreach ($arg as $key => $value) {
@@ -175,14 +243,16 @@ function save($table, $cols)
 
 //執行select 較複雜的語法
 
-function q($sql){
-    $pdo=pdo();
+function q($sql)
+{
+    $pdo = pdo();
 
     return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
 
 //用來傾印陣列...direct_dump
-function dd($array){
+function dd($array)
+{
     echo "<pre>";
     print_r($array);
     echo "</pre>";
