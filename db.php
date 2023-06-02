@@ -16,12 +16,12 @@
 
 // insert('options',['description'=>'51萬','subject_id'=>7,'total'=>45]);
 
+// echo "<br>";
+// echo _math('options','max','id');
+// echo "<br>";
+// echo _math('options','min','id');
 echo "<br>";
-echo _math('options','max','id');
-echo "<br>";
-echo _math('options','min','id');
-echo "<br>";
-echo _math('options','sum','total',['subject_id'=>7]);
+// echo _math('options','sum','total',['subject_id'=> 7]);
 //計數用函式
 function _math($table,$math,$col,...$arg)
 {
@@ -36,15 +36,17 @@ function _math($table,$math,$col,...$arg)
         }
         //"select * from $table where 'type'=1 &&'login'= 1"
         $sql = $sql . " where " . join("&&", $tmp);
+
     } else {
         $sql = $sql ." where " ; //"select * from $table"
         
-        
+        dd($sql);
     }
     if (isset($arg[1])) {                   //$arg[0] 之後可以比照arg[0]辦理 
         $sql = $sql ." where ". $arg[1];
     }
-    $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC); //出錯
+    dd($sql);
+    $rows = $pdo->query($sql)->fetchColumn(); 
        
     
     return $rows;
@@ -68,13 +70,13 @@ function _count($table, ...$arg)
         $sql = $sql . " where " . join("&&", $tmp);
 
     } else {
-        $sql = $sql ." where ". $arg[0]; //"select * from $table"
+        $sql = $sql ." where " ; //"select * from $table"
     }
     if (isset($arg[1])) {
         $sql = $sql ." where ". $arg[1];
     }
 
-    $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    $rows = $pdo->query($sql)->fetchColumn();
     return $rows;
 
 }
