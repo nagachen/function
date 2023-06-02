@@ -4,7 +4,7 @@ class Animal{
     public $name;
     protected $hair;
 
-    function ——construct(){   //建構式
+    function __construct(){   //建構式
 
     }
     public function age(){   //預設為public 
