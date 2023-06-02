@@ -1,13 +1,15 @@
 <?php
 class Animal{
     private  $age=10;
-    protected $name="大雄";
+    protected $name;
     protected $hair="red";
 
-    function __construct(){   //建構式,建立物件馬上執行的函式
-        echo "建立物件";
+    function __construct($name){   //建構式,建立物件馬上執行的函式
+        $this->name=$name;
     }
     
+
+
     public function getName(){
         return $this->name;
     }
@@ -17,7 +19,7 @@ class Animal{
         return $this->name;
     }
     public function age(){   //預設為public 
-        return $this->run();
+        return $this->age;
     }
     private function speed(){
         return "跑速1000";
@@ -27,7 +29,7 @@ class Animal{
     }
 }
 //生成物件
-$animal=new Animal;
+$animal=new Animal("nagachen");
 echo"<br>";
 echo $animal->getName();
 // echo $animal->age;  //無法存取
@@ -40,7 +42,11 @@ echo $animal->age();   //讀取private屬性的方式 Get的方式
 
 //繼承使用方式
 class Cat extends Animal {
-
+    private $age;
+    function __construct($name,$age){
+        $this->name=$name;
+        $this->age=$age;
+    }
     function catRun() {
         return $this->run();
     }
@@ -52,8 +58,10 @@ class Cat extends Animal {
 }
 
 echo "<br>";
-$cat=new Cat;
-echo $cat->age();
+
+//需注意繼承後建構子是否要覆寫，
+$cat=new Cat('小花',20);
+echo $cat->age();   //若要呈現出20，cat需覆寫age()方法
 echo $cat->catrun();
 echo $cat->run();
 
