@@ -16,6 +16,12 @@ echo "</pre>";
 
 // insert('options',['description'=>'51萬','subject_id'=>7,'total'=>45]);
 
+//老師建議的寫法
+function pdo(){
+    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
+    return $pdo = new PDO($dsn, 'root', '');
+}
+
 
 function all($table, $args)
 { //顯示指定資料表的資料
@@ -133,4 +139,21 @@ function save($table, $cols)
         insert($table, $cols);
     }
 }
+
+//執行select 較複雜的語法
+
+function q($sql){
+    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
+    $pdo = new PDO($dsn, 'root', '');
+
+    return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+}
+
+//用來傾印陣列...direct_dump
+function dd($array){
+    echo "<pre>";
+    print_r($array);
+    echo "</pre>";
+}
+
 ?>
