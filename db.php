@@ -22,36 +22,72 @@ function pdo(){
     return $pdo = new PDO($dsn, 'root', '');
 }
 
+//all($table) =>全部資料表的內容
+// 例select * from `topics`
 
-function all($table, $args)
-{ //顯示指定資料表的資料
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
-    $pdo = new PDO($dsn, 'root', '');
-    if (in_array('*', $args)) {
-        $sql = "select * from `$table`";
-        $row = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-        echo $sql;
-    } else {
-        $sql = "select `";
-        $sql .= join("`,`", array_keys($args));
-        $sql .= "` from `$table` where ";
-        foreach ($args as $key => $value) {
-            $tmp[] = "`$key` = '$value'";
+//all($table,$array)=>以and為基礎的符合條件資料
+// 例 selec * from `topics` where `type`='1' && `login`=1; =>('topics',['type'=1,'login'=>1])
+
+//all($table,$sql)=>以sql字串為條件的資料
+//例 select * from `topics` where open_time <= '2023/06/02' order by `id` desc
+//例all(`topic`,"where open_time <= '2023/06/02' order by `id` desc")
+
+//all($table,$array,$sql)=>符合複雜條件的資料
+//例:select * from `topics` where `type`=1 && `login`=1 order by `id` desc
+//例:all(`topic`,['type'=>1,'login'=>1],"order by `id` desc")
+
+function all ($table,...$arg){
+    $pdo=pdo();
+    $sql="select * from $table";
+    if(!empty($arg)){
+        if(is_array($arg[0])){  //['type'=>1,'login'=>1]
+            foreach ($arg as $key => $value) {
+                $tmp[] = "`$key`='$value'";
+            }
         }
-        $sql .= join(" && ", $tmp);
-        echo $sql;
-        echo "<br>";
-    
-    $row = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+        $sql=$sql . join("&&",$tmp);  
+        $sql .= 'where ';                                //"select * from $table  'type'=>1,'login'=>1"
+        dd($sql);
+    }else{
+        $sql=$sql .$arg[0];    //"select * from $table"
     }
-    return $row;
+    if(isset($arg[1])){
+        $sql=$sql . $arg[1];
+    }
+    
+    $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    return $rows;
 
 }
 
+// 自已所做的程式
+// function all($table, $args)
+// { //顯示指定資料表的資料
+//     $pdo=pdo();
+//     if (in_array('*', $args)) {
+//         $sql = "select * from `$table`";
+//         $row = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+//         echo $sql;
+//     } else {
+//         $sql = "select `";
+//         $sql .= join("`,`", array_keys($args));
+//         $sql .= "` from `$table` where ";
+//         foreach ($args as $key => $value) {
+//             $tmp[] = "`$key` = '$value'";
+//         }
+//         $sql .= join(" && ", $tmp);
+//         echo $sql;
+//         echo "<br>";
+    
+//     $row = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+//     }
+//     return $row;
+
+// }
+
 function find($table, $arg)
 {
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
-    $pdo = new PDO($dsn, 'root', '');
+    $pdo=pdo();
     $sql = "select * from `$table` where ";
     if (is_array($arg)) {
         foreach ($arg as $key => $value) {
@@ -72,8 +108,7 @@ function find($table, $arg)
 
 function update($table, $cols)
 { //一次更新一筆
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
-    $pdo = new PDO($dsn, 'root', '');
+    $pdo=pdo();
 
     //['subject'=>'今天天氣很好吧?',
     // 'open_time'=>'2023-05-29',
@@ -93,8 +128,7 @@ function update($table, $cols)
 
 function insert($table, $cols)
 {
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
-    $pdo = new PDO($dsn, 'root', '');
+    $pdo=pdo();
     $col = array_keys($cols); //取出key 陣列
     $sql = "insert into $table (`";
     $sql .= join("`,`", $col);
@@ -111,8 +145,7 @@ function insert($table, $cols)
 
 function del($table, $arg)
 {
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
-    $pdo = new PDO($dsn, 'root', '');
+    $pdo=pdo();
     $sql = "delete from `$table` where";
     if (is_array($arg)) {
         foreach ($arg as $key => $value) {
@@ -143,8 +176,7 @@ function save($table, $cols)
 //執行select 較複雜的語法
 
 function q($sql){
-    $dsn = "mysql:host=localhost;charset=utf8;dbname=vote";
-    $pdo = new PDO($dsn, 'root', '');
+    $pdo=pdo();
 
     return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 }
